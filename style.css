@@ -454,3 +454,98 @@ footer {
   font-size: 0.9rem;
   color: #555;
 }
+@media (max-width: 480px) {
+  .carrinho {
+    position: fixed;
+    bottom: 10px;
+    left: 5%;
+    right: 5%;
+    width: auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 1rem;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+  }
+
+  .carrinho h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .carrinho div {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .carrinho button {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  .carrinho a.whatsapp-button {
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .carrinho a.whatsapp-button::before {
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+  }
+}
+.fechar-carrinho {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  z-index: 999;
+}
+
+@media (max-width: 480px) {
+  .fechar-carrinho {
+    font-size: 1.3rem;
+    top: 10px;
+    right: 14px;
+  }
+}
+/* Estado inicial escondido */
+.carrinho.oculto {
+  transform: translateY(120%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Estado visível com transição suave */
+.carrinho {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.botao-carrinho {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #c16c6c;
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 12px 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  display: none; /* começa escondido */
+}
+
+.botao-carrinho.ativo {
+  display: block;
+}
