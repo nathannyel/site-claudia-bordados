@@ -68,6 +68,18 @@ function atualizarCarrinho() {
     finalizarBtn.removeAttribute('disabled');
     finalizarBtn.style.opacity = 1;
   }
+  // Atualizar contador no botão flutuante
+const contador = document.getElementById("contador-carrinho");
+if (contador) {
+  contador.textContent = carrinho.length;
+
+  if (carrinho.length === 0) {
+    contador.style.display = "none";
+  } else {
+    contador.style.display = "flex";
+  }
+}
+
 }
 
 // Remover item
