@@ -88,31 +88,24 @@ function removerItem(index) {
   atualizarCarrinho();
 }
 
-// Inicializar botões quando a página carregar
-document.addEventListener('DOMContentLoaded', () => {
-  inicializarBotoes();
-});
-// Botão de fechar carrinho
 document.addEventListener("DOMContentLoaded", () => {
   inicializarBotoes();
 
-  const carrinho = document.querySelector(".carrinho");
+  const carrinhoEl = document.querySelector(".carrinho");
   const botaoFechar = document.getElementById("fechar-carrinho");
   const botaoAbrir = document.getElementById("abrir-carrinho");
 
-  // Começa visível no desktop, mas oculto no mobile
-  if (window.innerWidth <= 480) {
-    carrinho.classList.add("oculto");
-    botaoAbrir.classList.add("ativo");
-  }
+  // Carrinho começa oculto (tanto no desktop quanto no mobile)
+  carrinhoEl.classList.add("oculto");
+  botaoAbrir.classList.add("ativo");
 
   botaoFechar.addEventListener("click", () => {
-    carrinho.classList.add("oculto");
+    carrinhoEl.classList.add("oculto");
     botaoAbrir.classList.add("ativo");
   });
 
   botaoAbrir.addEventListener("click", () => {
-    carrinho.classList.remove("oculto");
+    carrinhoEl.classList.remove("oculto");
     botaoAbrir.classList.remove("ativo");
   });
 });
