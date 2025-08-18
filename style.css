@@ -1,7 +1,8 @@
 /* Fonte e estrutura principal */
 /* Fontes personalizadas do projeto */
+/* Fonte e estrutura principal */
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .logo {
@@ -260,31 +261,8 @@ footer .sobre {
 .galeria-container .card {
   font-family: 'Poppins', sans-serif;
 }
-<style>
-  /* Fonte padrão do site */
-  body {
-    font-family: 'Poppins', sans-serif;
-  }
-
-  /* Títulos principais */
-  h1, h2, h3 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-  }
-
-  /* Logotipo com fonte cursiva */
-  #logo, .logo {
-    font-family: 'Great Vibes', cursive;
-  }
-
-  /* Aplicar Poppins na galeria */
-  .galeria-container .card,
-  .galeria-container button {
-    font-family: 'Poppins', sans-serif;
-  }
-</style>
 @media (max-width: 600px) {
-  .Carrinho {
+  .carrinho {
   bottom: 20px;
   right: 20px;
   background-color: #fff9f6;
@@ -563,4 +541,99 @@ footer {
   align-items: center;
   justify-content: center;
   font-weight: bold;
+}
+/* ===== NAVBAR ===== */
+body { scroll-behavior: smooth; }
+
+section, header { /* evita que a navbar cubra o título ao clicar em âncoras */
+  scroll-margin-top: 80px;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+  background: #fff9f6;
+  border-bottom: 1px solid #f0d8d5;
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .6rem 1rem;
+}
+
+.navbar .brand {
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.6rem;
+  color: #c16c6c;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.menu-toggle {
+  background: transparent;
+  border: 0;
+  font-size: 1.6rem;
+  cursor: pointer;
+  display: none; /* aparece só no mobile */
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #5a3e36;
+  padding: .4rem .6rem;
+  border-radius: 8px;
+}
+
+.nav-links a:hover,
+.nav-links a:focus {
+  background: #fcebea;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .menu-toggle { display: block; }
+
+  .nav-links {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: #fff;
+    display: none;
+    flex-direction: column;
+    padding: .5rem 1rem 1rem;
+    border-bottom: 1px solid #f0d8d5;
+  }
+
+  .nav-links.aberto { display: flex; }
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* ===== Animação Reveal ===== */
+.reveal {
+  opacity: 0; /* começa invisível */
+  transform: translateY(40px); /* começa deslocado para baixo */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal.visible {
+  opacity: 1; /* aparece */
+  transform: translateY(0); /* volta para posição normal */
 }

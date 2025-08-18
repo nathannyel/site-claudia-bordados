@@ -107,5 +107,64 @@ document.addEventListener("DOMContentLoaded", () => {
   botaoAbrir.addEventListener("click", () => {
     carrinhoEl.classList.remove("oculto");
     botaoAbrir.classList.remove("ativo");
+  })
+});
+// ----- MENU HAMBÚRGUER -----
+document.addEventListener('DOMContentLoaded', () => {
+  const btnMenu = document.getElementById('btn-menu');
+  const navLinks = document.getElementById('nav-links');
+
+  if (!btnMenu || !navLinks) return;
+
+  btnMenu.addEventListener('click', () => {
+    const aberto = navLinks.classList.toggle('aberto');
+    btnMenu.setAttribute('aria-expanded', String(aberto));
   });
+
+  // Fecha o menu ao clicar em um link (melhor UX)
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('aberto');
+      btnMenu.setAttribute('aria-expanded', 'false');
+    });
+  });
+});
+// ----- ANIMAÇÃO DE ENTRADA -----
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// Abrir carrinho
+document.getElementById('abrir-carrinho').addEventListener('click', () => {
+  document.querySelector('.carrinho').classList.remove('oculto');
+});
+
+// Fechar carrinho
+document.getElementById('fechar-carrinho').addEventListener('click', () => {
+  document.querySelector('.carrinho').classList.add('oculto');
+});
+
+// Atualizar contador do botão flutuante
+function atualizarContador() {
+  document.getElementById('contador-carrinho').textContent = carrinho.length;
+}
+
+// Chame essa função sempre que adicionar ou remover item
+// (adicione dentro de onde você atualiza o carrinho)
+// ===== Animação Reveal ao rolar a página =====
+document.addEventListener("DOMContentLoaded", () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  }, { threshold: 0.2 }); // ativa quando 20% do elemento estiver visível
+
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
 });
