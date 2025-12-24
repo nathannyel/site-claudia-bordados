@@ -637,3 +637,86 @@ section, header { /* evita que a navbar cubra o título ao clicar em âncoras */
   opacity: 1; /* aparece */
   transform: translateY(0); /* volta para posição normal */
 }
+
+/* =================== */
+/* Componente Carrossel */
+/* =================== */
+.carousel {
+  position: relative;
+  width: 100%;
+}
+
+/* Área visível das imagens */
+.carousel-viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* Lógica de exibição das imagens (slides) */
+[data-slides] > * {
+  display: none; /* Esconde todas as imagens por padrão */
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Exibe apenas a imagem que tem o atributo data-active */
+[data-slides] > [data-active] {
+  display: block;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+/* Botões de navegação */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: #c16c6c;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-btn:hover {
+  background: #c16c6c;
+  color: #fff;
+}
+
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+
+/* =================== */
+/* Responsividade Mobile (Ajuste Final) */
+/* =================== */
+@media (max-width: 600px) {
+  .catalogo-container,
+  .galeria-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 340px; /* Aumenta o tamanho do card no celular para preencher a tela */
+  }
+
+  .carousel-btn {
+    width: 40px; /* Botões maiores para facilitar o toque do dedo */
+    height: 40px;
+    font-size: 1.8rem;
+  }
+}

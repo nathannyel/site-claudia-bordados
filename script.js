@@ -168,3 +168,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
 });
+
+// ----- LÓGICA DO CARROSSEL -----
+document.querySelectorAll('.carousel').forEach(carousel => {
+  const buttons = carousel.querySelectorAll('.carousel-btn');
+  
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Verifica se é botão de próximo (1) ou anterior (-1)
+      const offset = button.classList.contains('next') ? 1 : -1;
+      const slides = button.closest('.carousel').querySelector('[data-slides]');
+      
+      const activeSlide = slides.querySelector('[data-active]');
+      let newIndex = [...slides.children].indexOf(activeSlide) + offset;
+      
+      // Loop infinito (se passar do último volta pro primeiro e vice-versa)
+      if (newIndex < 0) newIndex = slides.children.length - 1;
+      if (newIndex >= slides.children.length) newIndex = 0;
+      
+      // Troca o atributo data-active
+      slides.children[newIndex].dataset.active = true;
+      delete activeSlide.dataset.active;
+    });
+  });
+});
