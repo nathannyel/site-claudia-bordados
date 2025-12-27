@@ -60,7 +60,7 @@ function atualizarCarrinho() {
     finalizarBtn.setAttribute('disabled', 'disabled');
     finalizarBtn.style.opacity = 0.5;
   } else {
-    const numero = '5599984893782'; // Substitua pelo seu número
+    const numero = localStorage.getItem('site_whatsapp_number') || '5599984893782';
     const texto = encodeURIComponent(
       `Olá! Gostaria de orçamento dos seguintes itens:\n${mensagem}\n\nTotal: R$ ${total.toFixed(2).replace('.', ',')}`
     );
@@ -88,8 +88,121 @@ function removerItem(index) {
   atualizarCarrinho();
 }
 
+// Função para carregar produtos do LocalStorage e renderizar na tela
+function carregarProdutosDoSite() {
+  const galeriaContainer = document.querySelector('.galeria-container');
+  const catalogoContainer = document.querySelector('.catalogo-container');
+
+  // Dados padrão caso não tenha nada no localStorage (mesmos do admin)
+  const produtosPadrao = [
+      { nome: 'Bordado Floral', preco: 35.00, imagem: 'imagens/toalha.jpg', secao: 'galeria' },
+      { nome: 'Bordado Coração', preco: 40.00, imagem: 'imagens/kit-bebe.jpg', secao: 'galeria' },
+      { nome: 'Toalha de Lavabo', preco: 25.00, imagem: 'imagens/toalha.jpg', secao: 'galeria' },
+      { nome: 'Kit bebê bordado', preco: 0, imagem: 'imagens/kit-bebe.jpg', secao: 'catalogo' },
+      { nome: 'Toalhas personalizadas', preco: 0, imagem: 'imagens/toalha.jpg', secao: 'catalogo' },
+      { nome: 'Enxoval Completo', preco: 0, imagem: 'imagens/kit-bebe.jpg', secao: 'catalogo' }
+  ];
+
+  const produtos = JSON.parse(localStorage.getItem('produtos_site')) || produtosPadrao;
+
+  // Limpar containers para substituir o conteúdo estático pelo dinâmico
+  if (galeriaContainer) galeriaContainer.innerHTML = '';
+  if (catalogoContainer) catalogoContainer.innerHTML = '';
+
+  produtos.forEach(produto => {
+      // Define se é catálogo ou galeria baseado na propriedade 'secao'
+      // Se não tiver 'secao' (dados antigos), usa a lógica do preço
+      let isCatalogo;
+      if (produto.secao) {
+          isCatalogo = produto.secao === 'catalogo';
+      } else {
+          isCatalogo = produto.preco === 0;
+      }
+
+      const container = isCatalogo ? catalogoContainer : galeriaContainer;
+      const imagem = produto.imagem || 'imagens/toalha.jpg';
+      
+      if (!container) return;
+
+      const precoTexto = isCatalogo ? 'Preço sob consulta' : `R$ ${parseFloat(produto.preco).toFixed(2).replace('.', ',')}`;
+      const dataPreco = isCatalogo ? '' : `data-preco="${produto.preco}"`;
+
+      const card = document.createElement('div');
+      card.className = 'product-card reveal visible'; 
+      card.innerHTML = `
+        <div class="product-img">
+            <div class="carousel" data-carousel tabindex="0">
+              <button class="carousel-btn prev" aria-label="Imagem anterior">‹</button>
+              <div class="carousel-viewport">
+                <div class="carousel-track" data-slides>
+                  <img src="${imagem}" alt="${produto.nome}" loading="lazy" data-active>
+                </div>
+              </div>
+              <button class="carousel-btn next" aria-label="Próxima imagem">›</button>
+              <div class="carousel-dots" data-dots></div>
+            </div>
+        </div>
+        <div class="product-info">
+            <h3>${produto.nome}</h3>
+            <p class="price">${precoTexto}</p>
+            <button class="btn-cart add-to-cart" data-nome="${produto.nome}" ${dataPreco}>Adicionar ao carrinho</button>
+            <button class="btn-details">Ver Detalhes</button>
+        </div>
+      `;
+      
+      card.querySelector('.btn-details').addEventListener('click', () => {
+        abrirModal(produto, imagem, precoTexto, produto.detalhes);
+      });
+
+      container.appendChild(card);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  carregarProdutosDoSite(); // Carrega os produtos do admin
   inicializarBotoes();
+
+  // --- ATUALIZAR LINKS DO WHATSAPP COM NÚMERO CONFIGURADO ---
+  const numeroWhats = localStorage.getItem('site_whatsapp_number') || '5599984893782';
+  document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+    if (!link.id || link.id !== 'finalizar') { // Não altera o botão do carrinho pois ele é dinâmico
+        link.href = link.href.replace(/wa\.me\/\d+/, `wa.me/${numeroWhats}`);
+    }
+  });
+
+  // --- RASTREAMENTO DE VISITANTES ---
+  let visitantes = localStorage.getItem('site_visitantes') || 0;
+  visitantes = parseInt(visitantes) + 1;
+  localStorage.setItem('site_visitantes', visitantes);
+
+  // --- RASTREAMENTO DE CLIQUES NO WHATSAPP ---
+  document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+    link.addEventListener('click', () => {
+      let clicks = localStorage.getItem('site_whatsapp_clicks') || 0;
+      localStorage.setItem('site_whatsapp_clicks', parseInt(clicks) + 1);
+    });
+  });
+
+  // --- REGISTRAR PEDIDO AO CLICAR NO BOTÃO DE FINALIZAR (WHATSAPP) ---
+  const btnFinalizar = document.getElementById('finalizar');
+  if (btnFinalizar) {
+    btnFinalizar.addEventListener('click', () => {
+      if (carrinho.length === 0) return;
+
+      const pedidos = JSON.parse(localStorage.getItem('site_pedidos')) || [];
+      const novoPedido = {
+        id: '#' + Math.floor(Math.random() * 10000),
+        cliente: 'Cliente via WhatsApp', // Como não tem login, usamos um genérico
+        produtos: carrinho.map(item => item.nome).join(', '),
+        status: 'Clicou no WhatsApp',
+        data: new Date().toLocaleString()
+      };
+
+      pedidos.unshift(novoPedido); // Adiciona no topo da lista
+      if (pedidos.length > 10) pedidos.pop(); // Mantém apenas os últimos 10
+      localStorage.setItem('site_pedidos', JSON.stringify(pedidos));
+    });
+  }
 
   const carrinhoEl = document.querySelector(".carrinho");
   const botaoFechar = document.getElementById("fechar-carrinho");
@@ -108,7 +221,19 @@ document.addEventListener("DOMContentLoaded", () => {
     carrinhoEl.classList.remove("oculto");
     botaoAbrir.classList.remove("ativo");
   })
+  
+  // Eventos do Modal
+  const modal = document.getElementById('modal-produto');
+  const btnFecharModal = document.getElementById('fechar-modal');
+  
+  if(btnFecharModal) btnFecharModal.addEventListener('click', fecharModal);
+  if(modal) modal.addEventListener('click', (e) => {
+    if (e.target === modal) fecharModal();
+  });
+
+  inicializarCarrossel(); // Inicializa o carrossel nos novos elementos
 });
+
 // ----- MENU HAMBÚRGUER -----
 document.addEventListener('DOMContentLoaded', () => {
   const btnMenu = document.getElementById('btn-menu');
@@ -170,7 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ----- LÓGICA DO CARROSSEL -----
-document.querySelectorAll('.carousel').forEach(carousel => {
+function inicializarCarrossel() {
+  document.querySelectorAll('.carousel').forEach(carousel => {
   const buttons = carousel.querySelectorAll('.carousel-btn');
   
   buttons.forEach(button => {
@@ -192,3 +318,30 @@ document.querySelectorAll('.carousel').forEach(carousel => {
     });
   });
 });
+}
+
+// ----- FUNÇÕES DO MODAL -----
+function abrirModal(produto, imagemUrl, precoTexto, detalhes) {
+  const modal = document.getElementById('modal-produto');
+  const modalImg = document.getElementById('modal-img');
+  const modalTitulo = document.getElementById('modal-titulo');
+  const modalPreco = document.getElementById('modal-preco');
+  const modalDescricao = document.getElementById('modal-descricao');
+  const modalWhatsapp = document.getElementById('modal-whatsapp');
+
+  if(modalImg) modalImg.src = imagemUrl;
+  if(modalTitulo) modalTitulo.textContent = produto.nome;
+  if(modalPreco) modalPreco.textContent = precoTexto;
+  if(modalDescricao) modalDescricao.textContent = detalhes || 'Este produto é feito à mão com materiais de alta qualidade. Personalizamos cores e bordados conforme sua preferência.';
+  
+  const numero = localStorage.getItem('site_whatsapp_number') || '5599984893782';
+  const texto = encodeURIComponent(`Olá! Gostaria de saber mais detalhes sobre o produto: ${produto.nome}`);
+  if(modalWhatsapp) modalWhatsapp.href = `https://wa.me/${numero}?text=${texto}`;
+
+  if(modal) modal.classList.add('aberto');
+}
+
+function fecharModal() {
+  const modal = document.getElementById('modal-produto');
+  if(modal) modal.classList.remove('aberto');
+}
