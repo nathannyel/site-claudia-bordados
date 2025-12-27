@@ -192,31 +192,48 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const nome = document.getElementById('nome').value;
         const preco = parseFloat(document.getElementById('preco').value);
-        const imagem = document.getElementById('imagem').value;
+        const imagemInput = document.getElementById('imagem');
         const secao = document.getElementById('secao').value;
         const detalhes = document.getElementById('detalhes').value;
         const editIndex = document.getElementById('edit-index').value;
 
-        const novoProduto = {
-            nome,
-            preco,
-            imagem,
-            secao,
-            detalhes // Novo campo salvo
+        const salvarNoLocalStorage = (imagemBase64) => {
+            const novoProduto = {
+                nome,
+                preco,
+                imagem: imagemBase64,
+                secao,
+                detalhes
+            };
+
+            if (editIndex !== '') {
+                // Atualizar existente
+                produtos[editIndex] = novoProduto;
+                alert('Produto atualizado com sucesso!');
+            } else {
+                // Criar novo
+                produtos.push(novoProduto);
+                alert('Produto cadastrado com sucesso!');
+            }
+
+            salvarProdutos();
+            resetarFormulario();
         };
 
-        if (editIndex !== '') {
-            // Atualizar existente
-            produtos[editIndex] = novoProduto;
-            alert('Produto atualizado com sucesso!');
+        if (imagemInput.files && imagemInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                salvarNoLocalStorage(e.target.result);
+            };
+            reader.readAsDataURL(imagemInput.files[0]);
         } else {
-            // Criar novo
-            produtos.push(novoProduto);
-            alert('Produto cadastrado com sucesso!');
+            // Se não selecionou nova imagem
+            let imagemFinal = 'imagens/toalha.jpg'; // Padrão
+            if (editIndex !== '') {
+                imagemFinal = produtos[editIndex].imagem;
+            }
+            salvarNoLocalStorage(imagemFinal);
         }
-
-        salvarProdutos();
-        resetarFormulario();
     });
 
     function resetarFormulario() {
@@ -224,6 +241,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-index').value = '';
         document.getElementById('btn-submit').textContent = 'Salvar Produto';
         document.getElementById('btn-cancel').style.display = 'none';
+        document.getElementById('preview-imagem').style.display = 'none';
+        document.getElementById('preview-imagem').src = '';
     }
 
     document.getElementById('btn-cancel').addEventListener('click', resetarFormulario);
@@ -232,13 +251,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const produto = produtos[index];
         document.getElementById('nome').value = produto.nome;
         document.getElementById('preco').value = produto.preco;
-        document.getElementById('imagem').value = produto.imagem;
+        // Não podemos definir o value de um input file por segurança
+        // document.getElementById('imagem').value = produto.imagem;
         document.getElementById('secao').value = produto.secao;
         document.getElementById('detalhes').value = produto.detalhes || '';
         
         document.getElementById('edit-index').value = index;
         document.getElementById('btn-submit').textContent = 'Atualizar Produto';
         document.getElementById('btn-cancel').style.display = 'inline-block';
+
+        const preview = document.getElementById('preview-imagem');
+        if (produto.imagem) {
+            preview.src = produto.imagem;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
         
         document.querySelector('.admin-content').scrollTop = 0; // Rola para o topo
     };

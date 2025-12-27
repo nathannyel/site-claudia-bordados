@@ -813,3 +813,65 @@ footer {
 .btn-whatsapp-modal:hover {
   transform: scale(1.05);
 }
+
+/* Responsividade do Painel Admin */
+@media (max-width: 768px) {
+  #admin-wrapper {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    padding: 1rem;
+    align-items: center;
+  }
+
+  .admin-sidebar h2 {
+    margin-bottom: 1rem;
+  }
+
+  .admin-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .admin-menu li {
+    margin-bottom: 0;
+  }
+
+  .admin-menu a {
+    padding: 8px 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
+
+  .admin-card {
+    padding: 1rem;
+    overflow-x: auto; /* Permite rolagem horizontal em tabelas */
+  }
+
+  .product-table {
+    min-width: 600px; /* Garante que a tabela não fique espremida */
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
